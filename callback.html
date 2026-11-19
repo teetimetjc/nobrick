@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Authorization code – No Brick Left Behind</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  code#code{display:block;word-break:break-all;background:#0b0b10;border:1px solid #2a2a36;border-radius:8px;
+            padding:14px;color:#e9e9f0;font-size:15px;margin:12px 0}
+  button{background:var(--accent);color:#14141a;border:0;border-radius:8px;padding:10px 16px;font-weight:700;
+         font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+  <p><a href="index.html">← No Brick Left Behind</a></p>
+  <h1>Authorization code</h1>
+  <p id="msg">This page receives the one-time code after the operator connects the NoBrick Autopost app to the
+     channel's own account. Nothing is stored or sent anywhere from this page.</p>
+  <code id="code" hidden></code>
+  <button id="copy" hidden>Copy code</button>
+  <p id="note" hidden>Paste it back where you were asked for it. The code works once and expires in a few minutes.</p>
+</main>
+<script>
+  const q = new URLSearchParams(location.search);
+  const code = q.get("code"), err = q.get("error_description") || q.get("error");
+  const el = document.getElementById("code");
+  if (code) {
+    el.textContent = code; el.hidden = false;
+    document.getElementById("copy").hidden = false; document.getElementById("note").hidden = false;
+    document.getElementById("msg").textContent = "Connected. Here is your one-time authorization code:";
+    document.getElementById("copy").onclick = async () => {
+      try { await navigator.clipboard.writeText(code); document.getElementById("copy").textContent = "Copied!"; }
+      catch (e) { const r = document.createRange(); r.selectNodeContents(el); getSelection().removeAllRanges(); getSelection().addRange(r); }
+    };
+  } else if (err) {
+    document.getElementById("msg").textContent = "The connection was not completed: " + err;
+  }
+</script>
+</body>
+</html>
